@@ -3,11 +3,13 @@
 
 ```
 npm i
-# or 
+
+# or
+
 npm install
 ```
 
-# run devloppment server
+# run development server
 
 ```
 npm run dev
