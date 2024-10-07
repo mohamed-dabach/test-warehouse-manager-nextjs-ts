@@ -182,7 +182,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
             htmlFor="description"
             className="block text-sm font-medium text-gray-700"
           >
-            Description
+            Description (optionnal)
           </label>
           <textarea
             id="description"

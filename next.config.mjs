@@ -28,6 +28,9 @@ const nextConfig = {
 
     return config;
   },
+  images: {
+    domains: ["fakestoreapi.com"],
+  },
 };
 
 export default nextConfig;

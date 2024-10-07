@@ -119,7 +119,7 @@ export default function AddProduct() {
             id="category"
             name="category"
             value={product?.category || ""}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+            onChange={(e) =>
               setProduct(
                 (prev) =>
                   ({
@@ -143,13 +143,13 @@ export default function AddProduct() {
             htmlFor="description"
             className="block text-sm font-medium text-gray-700"
           >
-            Description
+            Description (optionnal)
           </label>
           <textarea
             id="description"
             name="description"
             value={product?.description || ""}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            onChange={(e) =>
               setProduct(
                 (prev) =>
                   ({

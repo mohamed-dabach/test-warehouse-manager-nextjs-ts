@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import TrashCan from "../public/img/icons/trashCan.svg";
+import TrashCan from "../../public/img/icons/trashCan.svg";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios/axiosInstance";
 
@@ -10,8 +10,8 @@ export default function DeleteProductBtn({
   cssClass,
 }: {
   id: number | string;
-  children: string | null;
-  cssClass: string | null;
+  children?: string | null;
+  cssClass?: string | null;
 }) {
   const Router = useRouter();
 
@@ -29,7 +29,7 @@ export default function DeleteProductBtn({
     <>
       <button
         onClick={handleDelete}
-        className={` text-red-600 rounded-lg flex gap-2 justify-center items-center ${cssClass}`}
+        className={` text-red-600 rounded-lg bg-white px-2 py-1 flex gap-2 justify-center items-center ${cssClass}`}
       >
         {children}
         <TrashCan />

@@ -1,27 +1,18 @@
+// app/page.tsx
 import ProductCategoryList from "@/components/products/ProductCategoryList";
-import ProductList from "@/components/products/ProductList";
-import axiosInstance from "@/lib/axios/axiosInstance";
-import { Product } from "@/types/Product";
-import React from "react";
+import SearchProductInput from "@/components/products/SearchProductInput";
+import DynamicProductList from "@/components/products/DaynamicProductList";
 
-
-const getProducts = async () => {
-  const products = await axiosInstance
-    .get<Product[]>("/products/")
-    .then((res) => res.data)
-    .catch((err) => {
-      console.log("There was an Error: " + err);
-      return null;
-    });
-  return products;
+type Props = {
+  searchParams: { name?: string; category?: string };
 };
 
-export default async function Home() {
-  const products = await getProducts();
+export default function Home({ searchParams }: Props) {
   return (
     <>
+      <SearchProductInput defaultValue={searchParams.name || ""} />
       <ProductCategoryList />
-      <ProductList products={products} />
+      <DynamicProductList />
     </>
   );
 }
