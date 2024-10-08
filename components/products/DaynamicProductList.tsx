@@ -1,74 +1,144 @@
-// components/products/DynamicProductList.tsx
 "use client";
 
 import { Product } from "@/types/Product";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import ProductList from "./ProductList";
-import axiosInstance from "@/lib/axios/axiosInstance";
 import Loading from "@/app/loading";
+import axios from "axios";
+import InfiniteScroll from "react-infinite-scroll-component";
+
+interface ProductsResponse {
+  products: Product[];
+  pagination: {
+    currentPage: number;
+    totalPages: number;
+    totalItems: number;
+    limit: number;
+  };
+}
+
+interface GetProductsProps {
+  name?: string | null;
+  category?: string | null;
+  page: number;
+  limit: number;
+}
 
 const getProducts = async ({
   category,
   name,
-}: {
-  name?: string;
-  category?: string | null;
-}) => {
-  const url = `/products/` + (category ? `category/${category} ` : "");
-  console.log(url);
-
+  page,
+  limit,
+}: GetProductsProps) => {
   try {
-    const response = await axiosInstance.get<Product[]>(url);
-    const products = response.data;
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
-    if (name && products) {
-      const searchTerm = name.toLowerCase();
-      return products.filter((product) =>
-        product.title.toLowerCase().includes(searchTerm)
-      );
-    }
+    if (name) params.append("name", name);
+    if (category) params.append("category", category);
 
-    return products;
+    const url = `/api/products?${params.toString()}`;
+    const response = await axios.get<ProductsResponse>(url);
+
+    return {
+      products: response.data.products,
+      pagination: response.data.pagination,
+    };
   } catch (err) {
-    console.log("There was an Error: " + err);
-    return null;
+    console.error("Error fetching products:", err);
+    return {
+      products: [],
+      pagination: {
+        currentPage: 1,
+        totalPages: 0,
+        totalItems: 0,
+        limit,
+      },
+    };
   }
 };
 
 export default function DynamicProductList() {
   const searchParams = useSearchParams();
-  const [products, setProducts] = useState<Product[] | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState<number>(1);
-
-  // set loading to true to prevent showing "no Products on the first load"
   const [loading, setLoading] = useState<boolean>(true);
+  const [hasMore, setHasMore] = useState<boolean>(true);
 
+  // products limit
+  const limit = 8;
+
+  const fetchProducts = useCallback(
+    async (pageNumber: number) => {
+      try {
+        const category = searchParams.get("category");
+        const name = searchParams.get("name");
+
+        const { products: fetchedProducts, pagination } = await getProducts({
+          name,
+          category,
+          page: pageNumber,
+          limit,
+        });
+
+        setProducts((prevProducts) => [...prevProducts, ...fetchedProducts]);
+
+        setHasMore(pageNumber < pagination.totalPages);
+      } catch (error) {
+        console.error("Error in fetchProducts:", error);
+        setHasMore(false);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [searchParams]
+  );
+
+  // Initial load
   useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      const category = searchParams.get("category") || null;
+    setPage(1);
+    setProducts([]);
+    fetchProducts(1);
+  }, [searchParams, fetchProducts]);
 
-      const name = searchParams.get("name") || undefined;
+  const loadMore = async () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    await fetchProducts(nextPage);
+  };
 
-      const fetchedProducts = await getProducts({ name, category });
-      setProducts(fetchedProducts);
-      setLoading(false);
-      console.log("hi")
-    };
-
-    fetchProducts();
-  }, [searchParams]);
-
-  if (loading) {
+  if (loading && products.length === 0) {
     return <Loading />;
   }
 
   return (
-    <ProductList
-      products={products}
-      setPage={setPage}
-      category={searchParams.get("category")}
-    />
+    <div>
+      <InfiniteScroll
+        dataLength={products.length}
+        next={loadMore}
+        hasMore={hasMore}
+        loader={<Loading />}
+        endMessage={
+          products.length > 0 && (
+            <p className="text-center text-gray-500 my-4">
+              No more products to load.
+            </p>
+          )
+        }
+      >
+        <ProductList
+          products={products}
+          category={searchParams.get("category")}
+        />
+      </InfiniteScroll>
+
+      {/* pagination /}
+      {/ {products.length > 0 && (
+        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+      )} */}
+    </div>
   );
 }
