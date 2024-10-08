@@ -1,5 +1,3 @@
-import Pen from "../../../public/img/icons/pen.svg";
-import Link from "next/link";
 import { Product } from "@/types/Product";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import Error404 from "@/components/Error404";
@@ -40,7 +38,7 @@ const ViewProduct = async ({ params: { id } }: ViewProductProps) => {
         <div className="md:flex gap-2 justify-center items-center">
           <Image
             src={product.image}
-            alt={product.name}
+            alt={product.title}
             width={150}
             height={150}
           />

@@ -4,14 +4,8 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { useRouter } from "next/navigation";
 import { FormErrors, validateForm } from "@/lib/helpers/product";
-
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  category: string;
-  description: string;
-}
+import toast from "react-hot-toast";
+import { Product } from "@/types/Product";
 
 const categories = [
   "electronics",
@@ -23,7 +17,6 @@ const categories = [
 export default function EditProduct({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const Router = useRouter();
@@ -54,11 +47,11 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     setSaving(true);
 
     try {
-      await axiosInstance.put(`/productss/${params.id}`, product);
-      setTimeout(() => Router.push("/"), 1000);
-      setFormErrors({ success: "Updated Successfuly" });
+      await axiosInstance.put(`/products/${params.id}`, product);
+      toast.success("Updated Successfuly!", { duration: 1000 });
+      Router.push("/");
     } catch (err) {
-      setFormErrors({ error: "Failed to update product" });
+      toast.error("There was an error!", { duration: 1000 });
       console.error(err);
     } finally {
       setSaving(false);
@@ -94,12 +87,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         Loading...
       </div>
     );
-  if (error)
-    return (
-      <div className="w-full h-screen flex items-center justify-center text-red-500">
-        {error}
-      </div>
-    );
+
   if (!product)
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -110,8 +98,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
-      <p className="text-green-400">{formErrors?.success ?? ""}</p>
-      <p className="text-red-400">{formErrors?.error ?? ""}</p>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label

@@ -3,6 +3,7 @@ import React from "react";
 import TrashCan from "../../public/img/icons/trashCan.svg";
 import { useRouter } from "next/navigation";
 import axiosInstance from "@/lib/axios/axiosInstance";
+import toast from "react-hot-toast";
 
 export default function DeleteProductBtn({
   id,
@@ -19,7 +20,9 @@ export default function DeleteProductBtn({
     console.log("delete ");
     if (!window.confirm("Delete Product!")) return;
     try {
-      await axiosInstance.delete(`/products/${id}`);
+      await axiosInstance.delete(`/products/${id}`).then((res) => res);
+      toast.success("Deleted successfuly", { duration: 1000 });
+
       Router.replace("/");
     } catch (err) {
       console.log(err);

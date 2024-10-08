@@ -5,6 +5,7 @@ import axiosInstance from "@/lib/axios/axiosInstance";
 import { useRouter } from "next/navigation";
 import { FormErrors, validateForm } from "@/lib/helpers/product";
 import { Product } from "@/types/Product";
+import toast from "react-hot-toast";
 
 const categories = [
   "electronics",
@@ -34,11 +35,13 @@ export default function AddProduct() {
         .post(`/products/`, product)
         .then((res) => res.data)
         .finally(() => setLoading(false));
-      setFormErrors({ success: "Added Successfuly" });
-      setTimeout(() => Router.push("/"), 1000);
+
+      toast.success("Added Successfuly!", { duration: 1000 });
+
+      Router.push("/");
     } catch (err) {
       console.error(err);
-      setFormErrors({ error: "There was an error" });
+      toast.error("There was an error!", { duration: 1000 });
     } finally {
       setLoading(false);
     }
@@ -46,8 +49,6 @@ export default function AddProduct() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Add Product</h1>
-      <p className="text-green-400">{formErrors?.success ?? ""}</p>
       <p className="text-red-400">{formErrors?.error ?? ""}</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
