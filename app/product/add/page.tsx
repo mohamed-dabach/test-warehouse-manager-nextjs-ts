@@ -15,7 +15,6 @@ const categories = [
 
 export default function AddProduct() {
   const [product, setProduct] = useState<Product | null>(null);
-
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors | null>(null);
   const Router = useRouter();
@@ -30,14 +29,16 @@ export default function AddProduct() {
 
     try {
       setLoading(true);
-      console.log("loading...");
+      // console.log("loading...");
       await axiosInstance
         .post(`/products/`, product)
         .then((res) => res.data)
         .finally(() => setLoading(false));
-      Router.push("/");
+      setFormErrors({ success: "Added Successfuly" });
+      setTimeout(() => Router.push("/"), 1000);
     } catch (err) {
       console.error(err);
+      setFormErrors({ error: "There was an error" });
     } finally {
       setLoading(false);
     }
@@ -46,6 +47,8 @@ export default function AddProduct() {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Add Product</h1>
+      <p className="text-green-400">{formErrors?.success ?? ""}</p>
+      <p className="text-red-400">{formErrors?.error ?? ""}</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>

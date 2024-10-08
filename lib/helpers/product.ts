@@ -4,6 +4,8 @@ export interface FormErrors {
   title?: string;
   price?: string;
   description?: string;
+  success?: string;
+  error?: string;
 }
 export const validateForm = ({
   product,

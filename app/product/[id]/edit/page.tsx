@@ -34,7 +34,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         const response = await axiosInstance.get(`/products/${params.id}`);
         setProduct(response.data);
       } catch (err) {
-        setError("Failed to fetch product");
+        setFormErrors({ error: "Failed to fetch product" });
         console.error(err);
       } finally {
         setLoading(false);
@@ -54,10 +54,11 @@ export default function EditProduct({ params }: { params: { id: string } }) {
     setSaving(true);
 
     try {
-      await axiosInstance.put(`/products/${params.id}`, product);
-      Router.push("/");
+      await axiosInstance.put(`/productss/${params.id}`, product);
+      setTimeout(() => Router.push("/"), 1000);
+      setFormErrors({ success: "Updated Successfuly" });
     } catch (err) {
-      setError("Failed to update product");
+      setFormErrors({ error: "Failed to update product" });
       console.error(err);
     } finally {
       setSaving(false);
@@ -109,7 +110,8 @@ export default function EditProduct({ params }: { params: { id: string } }) {
   return (
     <div className="max-w-2xl mx-auto p-6">
       <h1 className="text-2xl font-bold mb-6">Edit Product</h1>
-
+      <p className="text-green-400">{formErrors?.success ?? ""}</p>
+      <p className="text-red-400">{formErrors?.error ?? ""}</p>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
           <label
