@@ -74,9 +74,9 @@ export default function DynamicProductList() {
   const fetchProducts = useCallback(
     async (pageNumber: number) => {
       try {
+        setLoading(true);
         const category = searchParams.get("category");
         const name = searchParams.get("name");
-
         const { products: fetchedProducts, pagination } = await getProducts({
           name,
           category,
@@ -110,10 +110,6 @@ export default function DynamicProductList() {
     await fetchProducts(nextPage);
   };
 
-  if (loading && products.length === 0) {
-    return <Loading />;
-  }
-
   return (
     <div>
       <InfiniteScroll
@@ -132,6 +128,7 @@ export default function DynamicProductList() {
         <ProductList
           products={products}
           category={searchParams.get("category")}
+          loading={loading}
         />
       </InfiniteScroll>
 
