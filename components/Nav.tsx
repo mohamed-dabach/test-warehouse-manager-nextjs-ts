@@ -1,9 +1,13 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
+import Basket from "../public/img/icons/basket.svg";
+import { useSnapshot } from "valtio";
+import store from "@/store";
 
 export default function Nav() {
   const [toggleNav, setToggleNav] = useState<boolean>(false);
+  const { basket } = useSnapshot(store);
 
   // close nav bar
   function handleCloseNav() {
@@ -12,7 +16,7 @@ export default function Nav() {
 
   return (
     <nav className="bg-white border-gray-200 ">
-      <div className="max-w-screen-xl container m-auto flex flex-wrap items-center justify-between mx-auto p-4">
+      <div className="max-w-screen-xl relative container m-auto flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
           onClick={handleCloseNav}
           href="/"
@@ -48,7 +52,9 @@ export default function Nav() {
           </svg>
         </button>
         <div
-          className={`${!toggleNav && "hidden"} w-full md:block md:w-auto`}
+          className={`${
+            !toggleNav && "hidden"
+          } w-full md:block md:w-auto md:me-14`}
           id="navbar-default"
         >
           <ul className="font-medium flex flex-col gap-1 p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-gray-50 md:flex-row md:space-x-8 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-white ">
@@ -74,6 +80,17 @@ export default function Nav() {
             </li>
           </ul>
         </div>
+        <Link
+          href={"/panier"}
+          className="flex absolute top-5 right-16 md:right-4 justify-start items-center p-0 border-2 hover:border-gray-300 rounded-lg"
+        >
+          <div className="relative">
+            <div className="absolute bottom-[10px] left-[20px] text-sm rounded-[50%] bg-blue-400 text-white w-6 h-6 flex justify-center items-center">
+              {basket.length || 0}
+            </div>
+          </div>
+          <Basket />
+        </Link>
       </div>
     </nav>
   );

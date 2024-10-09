@@ -1,5 +1,5 @@
 // app/page.tsx
-import ProductCategoryList from "@/components/products/ProductCategoryList";
+import ProductCategoryList from "@/components/products/category/ProductCategoryList";
 import SearchProductInput from "@/components/products/SearchProductInput";
 import DynamicProductList from "@/components/products/DaynamicProductList";
 

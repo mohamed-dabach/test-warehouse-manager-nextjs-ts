@@ -1,5 +1,5 @@
 import React from "react";
-import ProductCategoryList from "./ProductCategoryList";
+import ProductCategoryList from "./category/ProductCategoryList";
 
 export default function ProductSearch() {
   return (

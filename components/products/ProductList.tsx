@@ -13,7 +13,17 @@ export default function ProductList({
   category,
   loading,
 }: ProductListProps) {
-  console.log(loading);
+  function removeDuplicatesById(products: Product[] | null): Product[] {
+    if (!products) return [];
+
+    const stringified = products.map((item) => JSON.stringify(item));
+    const uniqueSet = new Set(stringified);
+    const uniqueArray = Array.from(uniqueSet);
+    return uniqueArray.map((item) => JSON.parse(item));
+  }
+
+  const uniqueList = removeDuplicatesById(products);
+
   return (
     <div className="bg-white">
       <div className="mx-auto  px-4 py-10 container max-w-screen-xl m-auto">
@@ -24,8 +34,8 @@ export default function ProductList({
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {loading && <LoadingProductsSkeleton />}
           {!loading &&
-            (products && products.length > 0 ? (
-              products.map((product, i) => (
+            (uniqueList && uniqueList.length > 0 ? (
+              uniqueList.map((product, i) => (
                 <div key={product.id}>
                   <ProductListItem product={product} />
                 </div>
