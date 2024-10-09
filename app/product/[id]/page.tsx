@@ -11,6 +11,7 @@ import { useEffect, useState } from "react";
 import { useSnapshot } from "valtio";
 import store from "@/store";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 interface ViewProductProps {
   params: {
@@ -56,11 +57,12 @@ export default function ViewProduct({ params: { id } }: ViewProductProps) {
 
   function handleAddToBasket() {
     store.basket = [{ ...product, quantity: 1 }, ...store.basket];
+    toast.success("Added To Basket successfuly", { duration: 1000 });
   }
   return (
     <>
-      {loading && <ViewProductSkeleton />}
-      {!loading && !product && <ViewProductSkeleton />}
+      {loading && !product && <ViewProductSkeleton />}
+      {!loading && !product && <Error404 />}
       {product && (
         <div className="w-full">
           <div className="container max-w-2xl mx-auto p-2">

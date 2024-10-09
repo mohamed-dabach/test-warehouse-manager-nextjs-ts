@@ -15,7 +15,7 @@ export default function Page() {
         )
       : 0;
   return (
-    <div className=" bg-gray-100 pt-20">
+    <div className=" bg-gray-100 min-h-[100vh] pt-20">
       <h1 className="mb-10 text-center text-2xl font-bold">Cart Items</h1>
       <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
         <div className="rounded-lg md:w-2/3 flex flex-col">
@@ -41,9 +41,10 @@ export default function Page() {
           <hr className="my-4" />
           <div className="flex justify-between">
             <p className="text-lg font-bold">Total</p>
+
             <div className="">
               <p className="mb-1 text-lg font-bold">
-                ${total ? total + shippingPrice : 0}USD
+                ${total ? (total + shippingPrice).toFixed(2) : 0}USD
               </p>
               {/* <p className="text-sm text-gray-700">including VAT</p> */}
             </div>
@@ -66,6 +67,7 @@ function CardItem({ item, store }: { item: BasketProduct; store: Store }) {
       if (item.id !== product.id) return product;
       return { ...product, quantity: product.quantity + 1 };
     });
+    window.localStorage.setItem("basket", JSON.stringify(store));
   }
   function handleDecrement() {
     store.basket = store.basket.map((product) => {
@@ -76,12 +78,14 @@ function CardItem({ item, store }: { item: BasketProduct; store: Store }) {
           product.quantity > 1 ? product.quantity - 1 : product.quantity,
       };
     });
+    window.localStorage.setItem("basket", JSON.stringify(store));
   }
 
   function handleDelete() {
     store.basket = store.basket.filter((product) => {
       return product.id !== item.id;
     });
+    window.localStorage.setItem("basket", JSON.stringify(store));
   }
   return (
     <div className="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start">

@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Nav from "@/components/Nav";
 import { Toaster } from "react-hot-toast";
+import TriggerGetItemsFromLocalStorage from "@/components/TriggerGetItemsFromLocalStorage";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,6 +33,7 @@ export default function RootLayout({
       >
         <Nav />
         <Toaster />
+        <TriggerGetItemsFromLocalStorage />
         {children}
       </body>
     </html>

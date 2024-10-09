@@ -7,6 +7,7 @@ import { limitString } from "@/lib/helpers/product";
 import Basket from "../../public/img/icons/basket.svg";
 import { useSnapshot } from "valtio";
 import store from "@/store";
+import toast from "react-hot-toast";
 
 interface ProductListItemProps {
   product: Product;
@@ -19,6 +20,8 @@ export default function ProductListItem({ product }: ProductListItemProps) {
   const isInBasket: boolean = !!basket.find((ele) => ele.id === product.id);
   function handleAddToBasket() {
     store.basket = [{ ...product, quantity: 1 }, ...store.basket];
+    window.localStorage.setItem("basket", JSON.stringify(store));
+    toast.success("Added To Basket successfuly", { duration: 1000 });
   }
 
   return (
