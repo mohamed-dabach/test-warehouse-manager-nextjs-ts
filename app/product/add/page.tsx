@@ -5,6 +5,7 @@ import axiosInstance from "@/lib/axios/axiosInstance";
 import { useRouter } from "next/navigation";
 import { FormErrors, validateForm } from "@/lib/helpers/product";
 import { Product } from "@/types/Product";
+import toast from "react-hot-toast";
 
 const categories = [
   "electronics",
@@ -15,7 +16,6 @@ const categories = [
 
 export default function AddProduct() {
   const [product, setProduct] = useState<Product | null>(null);
-
   const [loading, setLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors | null>(null);
   const Router = useRouter();
@@ -30,14 +30,18 @@ export default function AddProduct() {
 
     try {
       setLoading(true);
-      console.log("loading...");
+      // console.log("loading...");
       await axiosInstance
         .post(`/products/`, product)
         .then((res) => res.data)
         .finally(() => setLoading(false));
+
+      toast.success("Added Successfuly!", { duration: 1000 });
+
       Router.push("/");
     } catch (err) {
       console.error(err);
+      toast.error("There was an error!", { duration: 1000 });
     } finally {
       setLoading(false);
     }
@@ -45,7 +49,7 @@ export default function AddProduct() {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Add Product</h1>
+      <p className="text-red-400">{formErrors?.error ?? ""}</p>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
@@ -119,7 +123,7 @@ export default function AddProduct() {
             id="category"
             name="category"
             value={product?.category || ""}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+            onChange={(e) =>
               setProduct(
                 (prev) =>
                   ({
@@ -143,13 +147,13 @@ export default function AddProduct() {
             htmlFor="description"
             className="block text-sm font-medium text-gray-700"
           >
-            Description
+            Description (optionnal)
           </label>
           <textarea
             id="description"
             name="description"
             value={product?.description || ""}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+            onChange={(e) =>
               setProduct(
                 (prev) =>
                   ({

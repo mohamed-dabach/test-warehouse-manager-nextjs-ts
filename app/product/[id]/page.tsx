@@ -1,9 +1,13 @@
-import Pen from "../../../public/img/icons/pen.svg";
-import Link from "next/link";
+"use client";
+
 import { Product } from "@/types/Product";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import Error404 from "@/components/Error404";
-import DeleteProductBtn from "@/components/DeleteProductBtn";
+import DeleteProductBtn from "@/components/products/DeleteProductBtn";
+import Image from "next/image";
+import EditProductBtn from "@/components/products/EditProductBtn";
+import ViewProductSkeleton from "@/components/products/ViewProductSkelaton";
+import { useEffect, useState } from "react";
 
 interface ViewProductProps {
   params: {
@@ -11,48 +15,70 @@ interface ViewProductProps {
   };
 }
 
-const ViewProduct = async ({ params: { id } }: ViewProductProps) => {
-  // fetch the the product by id
-  const product: Product | null = await axiosInstance
-    .get<Product | null>("/products/" + id)
-    .then((res) => res.data)
-    .catch((err) => {
-      console.log("Error couldn't fetch this product: ", err);
-      return null;
-    });
+async function getProductById(id: string) {
+  try {
+    const response = await axiosInstance.get<Product>(`/products/${id}`);
+    return response.data;
+  } catch (err) {
+    console.error("Error fetching product:", err);
+    return null;
+  }
+}
 
-  if (!product) return <Error404 />;
+export default function ViewProduct({ params: { id } }: ViewProductProps) {
+  const [product, setProduct] = useState<Product | null>(null);
+  const [loading, setLoading] = useState(true); // Fixed typo in setLoading
+
+  useEffect(() => {
+    const fetchProduct = async () => {
+      setLoading(true);
+      try {
+        const data = await getProductById(id);
+        setProduct(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
   return (
-    <div className="w-full">
-      <div className="container max-w-2xl m-auto">
-        <div className="flex  justify-end w-full gap-4 mb-3">
-          <Link
-            href={`/product/${id}/edit`}
-            className="px-3 py-2 border-2 text-green-600 rounded-lg flex gap-2 justify-center items-center"
-          >
-            Edit
-            <Pen />
-          </Link>
-          {/* button with delete product  logic */}
-          <DeleteProductBtn cssClass={"px-3 py-2 border"} id={id}>
-            Delete
-          </DeleteProductBtn>
+    <>
+      {loading && <ViewProductSkeleton />}
+      {!loading && !product && <ViewProductSkeleton />}
+      {product && (
+        <div className="w-full">
+          <div className="container max-w-2xl mx-auto p-2">
+            <div className="flex justify-end w-full gap-4 mb-3">
+              <EditProductBtn id={product.id} cssClass="px-3 py-2 border">
+                Edit
+              </EditProductBtn>
+              <DeleteProductBtn cssClass="px-3 py-2 border" id={product.id}>
+                Delete
+              </DeleteProductBtn>
+            </div>
+            <div className="md:flex gap-2 justify-center items-center">
+              <Image
+                src={product.image}
+                alt={product.title}
+                width={150}
+                height={150}
+              />
+              <div className="relative"></div>
+              <div>
+                <h3 className="text-2xl font-bold mt-2">
+                  {product.title} ({product.category})
+                </h3>
+                <p className="my-2">{product.description}</p>
+                <p className="my-2 font-bold">${product.price}</p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div>
-          <h2 className="text-2xl text-bold">Title: {product?.title}</h2>
-          <p className="my-2">
-            <strong>Description:</strong> {product?.description}
-          </p>
-          <p className="my-2">
-            <strong>Category:</strong> {product?.category}
-          </p>
-          <p className="my-2">
-            <strong>Price:</strong> {product?.price}$
-          </p>
-        </div>
-      </div>
-    </div>
+      )}
+    </>
   );
-};
-
-export default ViewProduct;
+}

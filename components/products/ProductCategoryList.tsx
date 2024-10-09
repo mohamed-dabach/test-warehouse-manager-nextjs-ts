@@ -19,10 +19,6 @@ export default async function ProductCategoryList() {
     <div className="w-full">
       <div className="container max-w-2xl m-auto">
         <div className="flex items-start flex-col">
-          {" "}
-          <h2 className="text-2xl font-bold tracking-tight text-gray-600">
-            Categories
-          </h2>
           <div className="flex justify-center gap-3 my-2 flex-wrap">
             {categories && ["Allsss", ...categories]?.length > 0
               ? categories?.map((item) => (

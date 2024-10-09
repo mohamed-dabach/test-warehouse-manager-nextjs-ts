@@ -1,29 +1,48 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 
-export default function FilterButton() {
-  const Router = useRouter();
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
+
+interface SearchProductInputProps {
+  defaultValue: string;
+}
+
+export default function SearchProductInput({
+  defaultValue,
+}: SearchProductInputProps) {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const category = searchParams.get("category");
-  const searchValue = searchParams?.get("name");
+  const [isPending, startTransition] = useTransition();
 
-  const [value, setValue] = useState<string>(searchValue || "");
+  const category = searchParams.get("category") || "";
 
-  useEffect(() => {
-    Router.push(`/product/search?category=${category}&name=${value}`);
-  }, [value, Router, category]);
+  const handleSearch = (term: string) => {
+    const params = new URLSearchParams(searchParams);
+    if (term) {
+      params.set("name", term);
+    } else {
+      params.delete("name");
+    }
+    if (category) {
+      params.set("category", category);
+    }
+
+    startTransition(() => {
+      router.push(`?${params.toString()}`);
+    });
+  };
 
   return (
     <div className="w-full">
       <div className="container max-w-2xl m-auto">
         <div className="flex justify-center">
           <input
-            onChange={(e) => setValue(e.target.value)}
-            value={value}
-            className={`mt-1 block max-w-md rounded-md border px-3 py-2 `}
-            placeholder="Name..."
+            onChange={(e) => handleSearch(e.target.value)}
+            defaultValue={defaultValue}
+            className={`mt-1 block max-w-md rounded-md border px-3 py-2 ${
+              isPending ? "opacity-50" : ""
+            }`}
+            placeholder="Search Product Name"
           />
         </div>
       </div>

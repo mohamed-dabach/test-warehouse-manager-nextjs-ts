@@ -4,14 +4,8 @@ import { useEffect, useState } from "react";
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { useRouter } from "next/navigation";
 import { FormErrors, validateForm } from "@/lib/helpers/product";
-
-interface Product {
-  id: number;
-  title: string;
-  price: number;
-  category: string;
-  description: string;
-}
+import toast from "react-hot-toast";
+import { Product } from "@/types/Product";
 
 const categories = [
   "electronics",
@@ -23,7 +17,6 @@ const categories = [
 export default function EditProduct({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const Router = useRouter();
@@ -34,7 +27,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         const response = await axiosInstance.get(`/products/${params.id}`);
         setProduct(response.data);
       } catch (err) {
-        setError("Failed to fetch product");
+        setFormErrors({ error: "Failed to fetch product" });
         console.error(err);
       } finally {
         setLoading(false);
@@ -55,9 +48,10 @@ export default function EditProduct({ params }: { params: { id: string } }) {
 
     try {
       await axiosInstance.put(`/products/${params.id}`, product);
+      toast.success("Updated Successfuly!", { duration: 1000 });
       Router.push("/");
     } catch (err) {
-      setError("Failed to update product");
+      toast.error("There was an error!", { duration: 1000 });
       console.error(err);
     } finally {
       setSaving(false);
@@ -93,12 +87,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
         Loading...
       </div>
     );
-  if (error)
-    return (
-      <div className="w-full h-screen flex items-center justify-center text-red-500">
-        {error}
-      </div>
-    );
+
   if (!product)
     return (
       <div className="w-full h-screen flex items-center justify-center">
@@ -182,7 +171,7 @@ export default function EditProduct({ params }: { params: { id: string } }) {
             htmlFor="description"
             className="block text-sm font-medium text-gray-700"
           >
-            Description
+            Description (optionnal)
           </label>
           <textarea
             id="description"

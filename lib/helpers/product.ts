@@ -4,6 +4,8 @@ export interface FormErrors {
   title?: string;
   price?: string;
   description?: string;
+  success?: string;
+  error?: string;
 }
 export const validateForm = ({
   product,
@@ -15,7 +17,7 @@ export const validateForm = ({
   const errors: FormErrors = {};
   let isValid = true;
 
-  if (!product) return false;
+  // if (!product) return false;
 
   // Title validation
   if (!product?.title?.trim()) {
@@ -36,14 +38,31 @@ export const validateForm = ({
   }
 
   // Description validation
-  if (!product?.description?.trim()) {
-    errors.description = "Description is required";
-    isValid = false;
-  } else if (product?.description.length < 10) {
-    errors.description = "Description must be at least 10 characters long";
-    isValid = false;
-  }
+  // if (!product?.description?.trim()) {
+  //   errors.description = "Description is required";
+  //   isValid = false;
+  // } else if (product?.description.length < 10) {
+  //   errors.description = "Description must be at least 10 characters long";
+  //   isValid = false;
+  // }
 
   setFormErrors(errors);
   return isValid;
 };
+
+interface limitStringProps {
+  phrase: string;
+  limitCount?: number;
+  delimiter?: string;
+}
+export function limitString({
+  phrase,
+  limitCount = 20,
+  delimiter = "...",
+}: limitStringProps) {
+  return `${phrase
+    ?.split("")
+    ?.splice(0, limitCount)
+    ?.join("")
+    ?.trim()}${delimiter}`;
+}
