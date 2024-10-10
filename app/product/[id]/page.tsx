@@ -12,6 +12,7 @@ import { useSnapshot } from "valtio";
 import store from "@/store";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
+import AddRemoveToBasket from "@/components/products/AddRemoveToBasket";
 
 interface ViewProductProps {
   params: {
@@ -87,7 +88,8 @@ export default function ViewProduct({ params: { id } }: ViewProductProps) {
                 </svg>
                 Back
               </button>
-              <div className="flex gap-3">
+              <div className="flex gap-3 justify-center items-center">
+                <AddRemoveToBasket product={product} />
                 <EditProductBtn id={product.id} cssClass="px-3 py-2 border">
                   Edit
                 </EditProductBtn>
@@ -112,13 +114,6 @@ export default function ViewProduct({ params: { id } }: ViewProductProps) {
                 <p className="my-2 font-bold">${product.price}</p>
               </div>
             </div>
-            <button
-              onClick={handleAddToBasket}
-              disabled={isInBasket}
-              className="mt-6  px-3 py-2 float-end rounded-md bg-blue-500 disabled:bg-blue-300 w-fit  font-medium text-blue-50 hover:bg-blue-600"
-            >
-              Add To Card
-            </button>
           </div>
         </div>
       )}

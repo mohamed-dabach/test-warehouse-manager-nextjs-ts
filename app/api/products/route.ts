@@ -1,6 +1,6 @@
 import axiosInstance from "@/lib/axios/axiosInstance";
 import { Product } from "@/types/Product";
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {
   try {
@@ -21,6 +21,7 @@ export async function GET(req: NextRequest) {
     let products: Product[] = response.data;
 
     // Apply name filter if provided
+
     if (name) {
       const searchTerm = name.toLowerCase();
       products = products.filter((product) =>
@@ -35,7 +36,7 @@ export async function GET(req: NextRequest) {
     // Apply pagination
     const paginatedProducts = products.slice(start, start + limit);
 
-    return Response.json({
+    return NextResponse.json({
       status: "success",
 
       products: paginatedProducts,
@@ -48,7 +49,7 @@ export async function GET(req: NextRequest) {
     });
   } catch (err) {
     console.error("Error in GET products:", err);
-    return Response.json(
+    return NextResponse.json(
       {
         status: "fail",
         error: err instanceof Error ? err.message : "Unknown error occurred",

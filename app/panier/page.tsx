@@ -1,4 +1,9 @@
 "use client";
+import {
+  handleDecrementBasket,
+  handleIncrementBasket,
+  handleRemoveFromBasket,
+} from "@/lib/helpers/basket";
 import store, { BasketProduct, Store } from "@/store";
 import Image from "next/image";
 import React from "react";
@@ -16,14 +21,14 @@ export default function Page() {
       : 0;
   return (
     <div className=" bg-gray-100 min-h-[100vh] pt-20">
-      <h1 className="mb-10 text-center text-2xl font-bold">Cart Items</h1>
+<h1 className="mb-10 text-center text-2xl font-bold">Cart Items</h1>
       <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
         <div className="rounded-lg md:w-2/3 flex flex-col">
           {basket.map((item) => (
-            <CardItem item={item} key={item.id} store={store} />
+            <CardItem item={item} key={item.id}  />
           ))}
           {basket.length < 1 && (
-            <p className="text-center flex flex-1 justify-center items-center text-gray-500">
+            <p c      lassName="text-center flex flex-1 justify-center items-center text-gray-500">
               No items, Go shoping{" "}
             </p>
           )}
@@ -61,32 +66,7 @@ export default function Page() {
   );
 }
 
-function CardItem({ item, store }: { item: BasketProduct; store: Store }) {
-  function handleIncrement() {
-    store.basket = store.basket.map((product) => {
-      if (item.id !== product.id) return product;
-      return { ...product, quantity: product.quantity + 1 };
-    });
-    window.localStorage.setItem("basket", JSON.stringify(store));
-  }
-  function handleDecrement() {
-    store.basket = store.basket.map((product) => {
-      if (item.id !== product.id) return product;
-      return {
-        ...product,
-        quantity:
-          product.quantity > 1 ? product.quantity - 1 : product.quantity,
-      };
-    });
-    window.localStorage.setItem("basket", JSON.stringify(store));
-  }
-
-  function handleDelete() {
-    store.basket = store.basket.filter((product) => {
-      return product.id !== item.id;
-    });
-    window.localStorage.setItem("basket", JSON.stringify(store));
-  }
+function CardItem({ item }: { item: BasketProduct }) {
   return (
     <div className="justify-between mb-6 rounded-lg bg-white p-6 shadow-md sm:flex sm:justify-start">
       <Image
@@ -104,14 +84,14 @@ function CardItem({ item, store }: { item: BasketProduct; store: Store }) {
         <div className="mt-4 flex justify-between im sm:space-y-6 sm:mt-0 sm:block sm:space-x-6">
           <div className="flex items-center border-gray-100">
             <button
-              onClick={handleDecrement}
+              onClick={() => handleDecrementBasket({ product: item })}
               className="cursor-pointer rounded-l bg-gray-100 py-1 px-3.5 duration-100 hover:bg-blue-500 hover:text-blue-50"
             >
               -
             </button>
             <div className="px-2">{item.quantity}</div>
             <button
-              onClick={handleIncrement}
+              onClick={() => handleIncrementBasket({ product: item })}
               className="cursor-pointer rounded-r bg-gray-100 py-1 px-3 duration-100 hover:bg-blue-500 hover:text-blue-50"
             >
               +
@@ -120,7 +100,7 @@ function CardItem({ item, store }: { item: BasketProduct; store: Store }) {
           <div className="flex items-center space-x-4">
             <p className="text-sm">{item.price}$</p>
             <svg
-              onClick={handleDelete}
+              onClick={() => handleRemoveFromBasket({ product: item })}
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

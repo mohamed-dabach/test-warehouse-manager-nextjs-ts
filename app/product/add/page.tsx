@@ -30,7 +30,6 @@ export default function AddProduct() {
 
     try {
       setLoading(true);
-      // console.log("loading...");
       await axiosInstance
         .post(`/products/`, product)
         .then((res) => res.data)

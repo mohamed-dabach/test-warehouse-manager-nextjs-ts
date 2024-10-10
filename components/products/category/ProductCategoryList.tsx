@@ -2,10 +2,10 @@ import axiosInstance from "@/lib/axios/axiosInstance";
 import ProductCategoryItem from "./ProductCategoryItem";
 
 const getCategorys = async () => {
-  const categories: string[] | null = await axiosInstance
-    .get<string[]>("/products/categories")
-    .then((res) => res.data)
-    .catch((err) => {
+  const categories = await axiosInstance
+    .get("/products/categories")
+    .then<string[]>((res) => res.data)
+    .catch<null>((err) => {
       console.log("There was an Error: " + err);
       return null;
     });

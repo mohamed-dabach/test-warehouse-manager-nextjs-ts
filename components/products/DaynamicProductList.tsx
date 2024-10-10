@@ -7,6 +7,7 @@ import ProductList from "./ProductList";
 import Loading from "@/app/loading";
 import axios from "axios";
 import InfiniteScroll from "react-infinite-scroll-component";
+import Pagination from "../Pagination";
 
 interface ProductsResponse {
   products: Product[];
@@ -63,9 +64,11 @@ const getProducts = async ({
 
 export default function DynamicProductList() {
   const searchParams = useSearchParams();
+
   const [products, setProducts] = useState<Product[]>([]);
   const [page, setPage] = useState<number>(1);
   const [loading, setLoading] = useState<boolean>(true);
+
   const [hasMore, setHasMore] = useState<boolean>(true);
 
   // products limit
@@ -104,9 +107,11 @@ export default function DynamicProductList() {
     fetchProducts(1);
   }, [searchParams, fetchProducts]);
 
+
   const loadMore = async () => {
     const nextPage = page + 1;
     setPage(nextPage);
+
     await fetchProducts(nextPage);
   };
 
@@ -128,14 +133,14 @@ export default function DynamicProductList() {
         <ProductList
           products={products}
           category={searchParams.get("category")}
-          loading={loading}
+          loading={loading && !products?.length}
         />
       </InfiniteScroll>
 
-      {/* pagination /}
-      {/ {products.length > 0 && (
-        <Pagination page={page} setPage={setPage} totalPages={totalPages} />
+      {/* {products.length > 0 && (
+        <Pagination page={page} setPage={setPage} totalPages={9} />
       )} */}
+      
     </div>
   );
 }

@@ -35,7 +35,7 @@ export default function ProductList({
           {loading && <LoadingProductsSkeleton />}
           {!loading &&
             (uniqueList && uniqueList.length > 0 ? (
-              uniqueList.map((product, i) => (
+              uniqueList.map((product) => (
                 <div key={product.id}>
                   <ProductListItem product={product} />
                 </div>
